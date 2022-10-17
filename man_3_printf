@@ -1,0 +1,88 @@
+.\" Manpage for nuseradd.
+.\" Contact vivek@nixcraft.net.in to correct errors or typos.
+.TH printf 3 "17 March 2021" "1.0" "printf man page"
+.SH NAME
+.P
+.B
+_printf
+.SH SYNOPSIS
+.P
+.B #include
+"main.h"
+
+.I
+int
+
+.B
+_printf
+(
+.I const 
+.I char
+.I *
+.I format
+,
+.I ...
+);
+
+.SH DESCRIPTION
+.P
+The printf() functions write output to stdout, the standard output stream; fprintf() write output to the given output stream.
+
+.P
+The function write the output under the control of a format string that specifies how subsequent arguments (or arguments accessed via the variable-length argument facilities of stdarg(3)) are converted for output.
+
+.P
+The format string is composed of zero or more directives: ordinary characters (not %), which are copied unchanged to the output stream; and conversion specifications, each of which results in fetching zero or more subsequent arguments.  Each conversion speci- fication is introduced by the % character.
+
+.P
+The conversion specifiers and their meanings are:
+
+.TP
+.B c
+.RP
+The int argument is converted to an unsigned char, and the resulting character is written.
+.TP
+.B s
+.RP
+The char * argument is expected to be a pointer to an array of character type (pointer to a string).  Characters from the array are written up to (but not including) a terminating NUL character.
+.TP
+.B d, i
+.RP
+The int argument is converted to sign decimal notation.
+.TP
+.B o, u, x, X, b
+.RP
+The  unsigned int argument is converted to unsigned binary (b), unsigned octal (o), unsigned decimal (u), or unsigned hexadecimal (x and X) notation.  The letters abcdef are used for x conversions; the letters ABCDEF are used for X conversions.
+.TP
+.B p
+.RP
+The void * pointer argument is printed in hexadecimal.
+.TP
+.B r
+.RP
+The char * argument is expected to be a pointer to an array of character type (pointer to a string). Characters from the array are reverse written.
+.TP
+.B R
+.RP
+The char * argument is expected to be a pointer to an array of character type (pointer to a string). Characters from the array are Rot13 converted.
+.TP
+.B S
+.RP
+The char * argument is expected to be a pointer to an array of character type (pointer to a string). Unprintable are printed this way "\\x" followed by there ASCII values in hexadecimal (uppercase two characters).
+.TP
+.B %
+.RP
+A '%' is written.  No argument is converted.  The complete conversion specification is '%%'.
+
+.SH EXAMPLES
+
+.P
+#include "main.h"
+
+_printf("%s", "main");
+
+.SH AUTHORS
+.P
+Becky04 <temmyisijola@gmail.com>
+.P
+Lordwil1 <messagelordwill@gmail.com>
