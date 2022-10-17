@@ -1,86 +1,47 @@
-#include <stdarg.h>
 #include "main.h"
-#include <stddef.h>
 
 /**
- * get_op - select function for conversion char
- * @c: char to check
- * Return: pointer to function
+ * _printf - produces output according to a format
+ * @format: format string containing the characters and the specifiers
+ * Description: this function will call the get_print() function that will
+ * determine which printing function to call depending on the conversion
+ * specifiers contained into fmt
+ * Return: length of the formatted output string
  */
-
-int (*get_op(const char c))(va_list)
-{
-	int i = 0;
-
-	flags_p fp[] = {
-		{"c", print_char},
-		{"s", print_str},
-		{"i", print_nbr},
-		{"d", print_nbr},
-		{"b", print_binary},
-		{"o", print_octal},
-		{"x", print_hexa_lower},
-		{"X", print_hexa_upper},
-		{"u", print_unsigned},
-		{"S", print_str_unprintable},
-		{"r", print_str_reverse},
-		{"p", print_ptr},
-		{"R", print_rot13},
-		{"%", print_percent}
-	};
-	while (i < 14)
-	{
-		if (c == fp[i].c[0])
-		{
-			return (fp[i].f);
-		}
-		i++;
-	}
-	return (NULL);
-}
-
-/**
- * _printf - Reproduce behavior of printf function
- * @format: format string
- * Return: value of printed chars
- */
-
 int _printf(const char *format, ...)
 {
-	va_list ap;
-	int sum = 0, i = 0;
-	int (*func)();
+	int (*pfunc)(va_list, flags_t *);
+	const char *p;
+	va_list arguments;
+	flags_t flags = {0, 0, 0};
 
-	if (!format || (format[0] == '%' && format[1] == '\0'))
+	register int count = 0;
+
+	va_start(arguments, format);
+	if (!format || (format[0] == '%' && !format[1]))
 		return (-1);
-	va_start(ap, format);
-
-	while (format[i])
+	if (format[0] == '%' && format[1] == ' ' && !format[2])
+		return (-1);
+	for (p = format; *p; p++)
 	{
-		if (format[i] == '%')
+		if (*p == '%')
 		{
-			if (format[i + 1] != '\0')
-				func = get_op(format[i + 1]);
-			if (func == NULL)
+			p++;
+			if (*p == '%')
 			{
-				_putchar(format[i]);
-				sum++;
-				i++;
-			}
-			else
-			{
-				sum += func(ap);
-				i += 2;
+				count += _putchar('%');
 				continue;
 			}
-		}
-		else
-		{
-			_putchar(format[i]);
-			sum++;
-			i++;
-		}
+			while (get_flag(*p, &flags))
+				p++;
+			pfunc = get_print(*p);
+			count += (pfunc)
+				? pfunc(arguments, &flags)
+				: _printf("%%%c", *p);
+		} else
+			count += _putchar(*p);
 	}
-	va_end(ap);
-	return (sum);
+	_putchar(-1);
+	va_end(arguments);
+	return (count);
 }

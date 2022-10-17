@@ -1,88 +1,102 @@
-.\" Manpage for nuseradd.
-.\" Contact vivek@nixcraft.net.in to correct errors or typos.
-.TH printf 3 "17 March 2021" "1.0" "printf man page"
+.TH man 3 "18 October 2022" "MAIN" "_PRINTF"
 .SH NAME
-.P
-.B
-_printf
+.B _printf
+- formatted output conversion
 .SH SYNOPSIS
-.P
-.B #include
-"main.h"
-
-.I
-int
-
-.B
-_printf
-(
-.I const 
-.I char
-.I *
+.B #include \(dqmain.h\(dq
+.sp
+.B int _printf(const char *
 .I format
-,
-.I ...
-);
-
+.B , ...);
 .SH DESCRIPTION
-.P
-The printf() functions write output to stdout, the standard output stream; fprintf() write output to the given output stream.
-
-.P
-The function write the output under the control of a format string that specifies how subsequent arguments (or arguments accessed via the variable-length argument facilities of stdarg(3)) are converted for output.
-
-.P
-The format string is composed of zero or more directives: ordinary characters (not %), which are copied unchanged to the output stream; and conversion specifications, each of which results in fetching zero or more subsequent arguments.  Each conversion speci- fication is introduced by the % character.
-
-.P
-The conversion specifiers and their meanings are:
-
-.TP
+The function _printf is a variadic function that produces a string according to a
+.I format
+and prints it to the standard output, much like the C standard library function printf. It can receive a variable number of arguments.
+This function has been created in the context of a first-year project for Holberton School.
+.sp
+.B Return value
+.sp
+On success, _printf returns the number of characters printed. If
+.I format
+is NULL or if the functions encounters any errors, it returns -1.
+.sp
+.B Format of the format string
+.sp
+The format string can contain any characters, just like a regular string, in double quotes, which will be printed as is. For example, _printf(\(dqHello\(dq) will print: Hello.
+However, this format string can contain
+.I conversion specifiers.
+These start with a %, and are followed with a character (see
+.I conversion specifiers
+). Special characters like a new line are escaped, for example _printf(\(dq\\n\(dq) will print a new line.
+.sp
+.B Conversion specifiers
+.sp
+These are the characters that specify the type of the variable that needs to be printed. The variables to be printed are separated from the format string with a comma. Each variable passed to _printf need to have a conversion specifier.
+.sp
+.B i, d
+- Both these specifiers are for
+.I int
+arguments. They convert the variable to a decimal number, positive or negative.
+.sp
 .B c
-.RP
-The int argument is converted to an unsigned char, and the resulting character is written.
-.TP
+- Prints a
+.I single character.
+.sp
 .B s
-.RP
-The char * argument is expected to be a pointer to an array of character type (pointer to a string).  Characters from the array are written up to (but not including) a terminating NUL character.
-.TP
-.B d, i
-.RP
-The int argument is converted to sign decimal notation.
-.TP
-.B o, u, x, X, b
-.RP
-The  unsigned int argument is converted to unsigned binary (b), unsigned octal (o), unsigned decimal (u), or unsigned hexadecimal (x and X) notation.  The letters abcdef are used for x conversions; the letters ABCDEF are used for X conversions.
-.TP
-.B p
-.RP
-The void * pointer argument is printed in hexadecimal.
-.TP
-.B r
-.RP
-The char * argument is expected to be a pointer to an array of character type (pointer to a string). Characters from the array are reverse written.
-.TP
-.B R
-.RP
-The char * argument is expected to be a pointer to an array of character type (pointer to a string). Characters from the array are Rot13 converted.
-.TP
-.B S
-.RP
-The char * argument is expected to be a pointer to an array of character type (pointer to a string). Unprintable are printed this way "\\x" followed by there ASCII values in hexadecimal (uppercase two characters).
-.TP
+- Prints an entire
+.I string.
+.sp
+.B u
+- Prints an
+.I unsigned int.
+.sp
+.B x, X
+- Respecively print a number in lowercase and uppercase
+.I hexadecimal
+base.
+.sp
+.B o, b
+- Respectively print a number in
+.I octal
+and
+.I binary
+base.
+.sp
 .B %
-.RP
-A '%' is written.  No argument is converted.  The complete conversion specification is '%%'.
-
-.SH EXAMPLES
-
-.P
-#include "main.h"
-
-_printf("%s", "main");
-
+- Acts like an escape for the character %. To print \(dq%\(dq, the format string should contain \(dq%%\(dq.
+.sp
+.B r, R
+- Respectively print a string in reverse and in ROT13 encryption.
+.sp
+.B S
+- Prints a string, but non-printable characters are printed this way: \\x, followed by the ASCII code value in uppercase hexadecimal.
+.sp
+.B p
+- Prints an address, given by a pointer variable
+.sp
+.B Flag characters for conversion specifiers
+.sp
+.B +
+- Prints a plus sign in front of positive signed integers and a minus sign in front of negative signed integers.
+ + overrides a space when both flags are given.
+.sp
+.B ' '
+- Prints a space in front of signed integers.
+.sp
+.B #
+- Modifier for unsigned conversions. For x, prepends \(dq0x\(dq, and for X, prepends \(dq0X\(dq. For o, if the converted number doesn't already begin with a 0, prepends a 0.
+.sp
+.SH SEE ALSO
+.I printf(3)
+.I _putchar.c
+.SH NOTES
+_printf uses a custom character printing function called _putchar, that uses the system call write(). 
+_putchar uses a static buffer of 1024 bytes and a static incrementing variable. 
+That way, everytime _putchar is called inside _printf, the character is stored inside the buffer and the function moves to the next character, 
+until _printf calls _putchar(-1), which \(dqflushes\(dq the buffer and resets the incrementing variable to 0. 
+That way, _putchar only needs to call write one time, passing to it the whole buffer and the number of bytes in it, which is given by the value of the incrementing variable.
+.sp
+.SH BUGS
+_printf does not take care of length and precision modifiers yet. For example, _printf(\(dq%hx\(dq) will not produce the same output as the call to the standard library printf.
 .SH AUTHORS
-.P
-Becky04 <temmyisijola@gmail.com>
-.P
-Lordwil1 <messagelordwill@gmail.com>
+Lordwill1 and Becky04, Cohort 9.
